@@ -57,8 +57,10 @@ const processData = (data: Array<any>) => {
   let cgn_level: Array<any> = [];
   let order_level: Array<any> = [];
   let creative_level: Array<any> = [];
+  let date:string="";
 
   data.forEach((e) => {
+    date=e.Date;
     let $cgn: any = $cgn_level.findIndex(
       (x: any) => x.CampaignID == e.CampaignID
     );
@@ -67,7 +69,7 @@ const processData = (data: Array<any>) => {
     );
     let $creative: any = $creative_level.findIndex(
       (x: any) => x.CreativeID == e.CreativeID
-    );
+    ); 
 
     if ($cgn == -1) {
       $cgn_level.push({
@@ -194,6 +196,7 @@ const processData = (data: Array<any>) => {
     cgn_level: cgn_level,
     order_level: order_level,
     creative_level: creative_level,
+    date:date
   };
   return all;
 };
@@ -273,20 +276,17 @@ const convertFile = async () => {
       if ($nad != -1) {
         filterdata.push(e);
       }
-    });
-
-    let _date = daylog.split(".");
-    let $_date = _date[0].split("_");
+    });  
    
-    let { cgn_level, order_level, creative_level } = await processData(
+    let { cgn_level, order_level, creative_level,date } = await processData(
       filterdata
     );
 
-    let filecgn_level = path.resolve(__dirname, `../results/cgn_level/${$_date[1]}`);
-    let filecgn_order = path.resolve(__dirname, `../results/order_level/${$_date[1]}`);
-    let filecgn_creative = path.resolve(__dirname, `../results/creative_level/${$_date[1]}`);
+    let filecgn_level = path.resolve(__dirname, `../results/cgn_level/${date}`);
+    let filecgn_order = path.resolve(__dirname, `../results/order_level/${date}`);
+    let filecgn_creative = path.resolve(__dirname, `../results/creative_level/${date}`);
    
-    await fs.writeFileSync(`${filecgn_level}.csv`,JSON.stringify(cgn_level));
+    await fs.writeFileSync(`${filecgn_level}.json`,JSON.stringify(cgn_level));
     await fs.writeFileSync(`${filecgn_order}.json`,JSON.stringify(order_level));
     await fs.writeFileSync(`${filecgn_creative}.json`,JSON.stringify(creative_level));
 
